@@ -5,7 +5,7 @@
 **Introduction**:
 In this guide, we'll walk you through the process of building a Go application that uses the Echo web framework for creating RESTful APIs, implements JSON Web Token (JWT) authentication for user authorization, and connects to a MongoDB database for data storage. This combination of technologies will help you create a robust and secure web application.
 
-Prerequisites:
+**Prerequisites**:
 Before you begin, ensure that you have the following tools and libraries installed:
 
 **Go (Golang)** - Install Go from the official website: https://golang.org/dl/
