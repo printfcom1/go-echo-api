@@ -2,7 +2,7 @@
   "WorkingDir": ".",
   "SourceDir": ["."],
   "SourceExt": [".c", ".cpp", ".go", ".h"],
-  "BuildCmd": "go build server.go",
-  "RunCmd": "./server",
+  "BuildCmd": "go build main.go",
+  "RunCmd": "./main",
   "Decreasing": 1
 }

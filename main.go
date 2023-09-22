@@ -7,9 +7,9 @@ import (
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	ctrl "github.com/to-do-list/src"
-	strc "github.com/to-do-list/struct"
-	handler "github.com/to-do-list/util"
+	"github.com/to-do-list/controller"
+	"github.com/to-do-list/handler"
+	"github.com/to-do-list/struc"
 )
 
 func main() {
@@ -26,8 +26,8 @@ func main() {
 
 	time.Local = location
 
-	e.POST("/login", ctrl.Login)
-	e.POST("/db/login", ctrl.LoginDB)
+	e.POST("/login", controller.Login)
+	e.POST("/db/login", controller.LoginDB)
 
 	todo := e.Group("/todo")
 
@@ -44,7 +44,7 @@ func main() {
 			} else {
 				claims, _ := token.Claims.(jwt.MapClaims)
 				c.Set("username", claims["username"].(string))
-				return new(strc.JwtCustomClaims), nil
+				return new(struc.JwtCustomClaims), nil
 			}
 		},
 		ErrorHandler: func(c echo.Context, err error) error {
@@ -53,19 +53,19 @@ func main() {
 		SigningKey: []byte(key)}
 
 	todo.Use(echojwt.WithConfig(config))
-	todo.GET("/GetToDoListAll", ctrl.GetToDolist)
-	todo.GET("/GetToDoListById/:id", ctrl.GetToDolistById)
-	todo.POST("/AddToDoList", ctrl.AddToDoList)
-	todo.PUT("/UpdateToDoList/:id", ctrl.UpdateToDoList)
-	todo.DELETE("/DeleteToDoList/:id", ctrl.DeleteToDolistById)
+	todo.GET("/GetToDoListAll", controller.GetToDolist)
+	todo.GET("/GetToDoListById/:id", controller.GetToDolistById)
+	todo.POST("/AddToDoList", controller.AddToDoList)
+	todo.PUT("/UpdateToDoList/:id", controller.UpdateToDoList)
+	todo.DELETE("/DeleteToDoList/:id", controller.DeleteToDolistById)
 
 	todoDB := e.Group("/todo/db")
 	todoDB.Use(echojwt.WithConfig(config))
-	todoDB.GET("/GetToDoListAll", ctrl.GetToDoListDB)
-	todoDB.POST("/CreateToDoList", ctrl.CreateToDoListDB)
-	todoDB.GET("/GetToDoListById/:id", ctrl.GetToDolistDBById)
-	todoDB.PUT("/UpdateToDoList/:id", ctrl.UpdateToDoListDB)
-	todo.DELETE("/DeleteToDoList/:id", ctrl.DeleteToDolistDBById)
+	todoDB.GET("/GetToDoListAll", controller.GetToDoListDB)
+	todoDB.POST("/CreateToDoList", controller.CreateToDoListDB)
+	todoDB.GET("/GetToDoListById/:id", controller.GetToDolistDBById)
+	todoDB.PUT("/UpdateToDoList/:id", controller.UpdateToDoListDB)
+	todo.DELETE("/DeleteToDoList/:id", controller.DeleteToDolistDBById)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }

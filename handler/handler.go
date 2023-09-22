@@ -6,11 +6,11 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
-	strc "github.com/to-do-list/struct"
+	"github.com/to-do-list/struc"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func QueryToDoByID(toDoList []strc.ToDo, idToQuery string) *strc.ToDo {
+func QueryToDoByID(toDoList []struc.ToDo, idToQuery string) *struc.ToDo {
 	for _, item := range toDoList {
 		if item.Id == idToQuery {
 			return &item
@@ -19,7 +19,7 @@ func QueryToDoByID(toDoList []strc.ToDo, idToQuery string) *strc.ToDo {
 	return nil
 }
 
-func UpdateToDoMap(toDoList *[]strc.ToDo, idToQuery string, newTitle string, newDescription string) *strc.ToDo {
+func UpdateToDoMap(toDoList *[]struc.ToDo, idToQuery string, newTitle string, newDescription string) *struc.ToDo {
 	for i, item := range *toDoList {
 		if item.Id == idToQuery {
 			(*toDoList)[i].Title = newTitle
@@ -30,7 +30,7 @@ func UpdateToDoMap(toDoList *[]strc.ToDo, idToQuery string, newTitle string, new
 	return nil
 }
 
-func DeleteToDoByID(toDoList *[]strc.ToDo, idToQuery string) *strc.ToDo {
+func DeleteToDoByID(toDoList *[]struc.ToDo, idToQuery string) *struc.ToDo {
 	for i, item := range *toDoList {
 		if item.Id == idToQuery {
 			deletedItem := (*toDoList)[i]

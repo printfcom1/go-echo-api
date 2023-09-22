@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	handler "github.com/to-do-list/util"
+	"github.com/to-do-list/handler"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )

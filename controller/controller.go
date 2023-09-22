@@ -1,4 +1,4 @@
-package ctrl
+package controller
 
 import (
 	"context"
@@ -8,21 +8,21 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
+	"github.com/to-do-list/handler"
 	"github.com/to-do-list/mongc"
-	strc "github.com/to-do-list/struct"
-	handler "github.com/to-do-list/util"
+	"github.com/to-do-list/struc"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var TodoList []strc.ToDo
+var TodoList []struc.ToDo
 
 var db *mongo.Collection = mongc.InitMongoClient().Database("golang").Collection("ToDoList")
 var user *mongo.Collection = mongc.InitMongoClient().Database("golang").Collection("User")
 
 func Login(c echo.Context) error {
-	auth := new(strc.AuthInput)
+	auth := new(struc.AuthInput)
 
 	if err := c.Bind(auth); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
@@ -32,7 +32,7 @@ func Login(c echo.Context) error {
 		return echo.ErrUnauthorized
 	}
 
-	claims := &strc.JwtCustomClaims{
+	claims := &struc.JwtCustomClaims{
 		UserName: auth.UserName,
 		Admin:    true,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -54,14 +54,14 @@ func Login(c echo.Context) error {
 }
 
 func LoginDB(c echo.Context) error {
-	auth := new(strc.AuthInput)
+	auth := new(struc.AuthInput)
 
 	if err := c.Bind(auth); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
 	filter := bson.M{"username": auth.UserName}
-	var result strc.User
+	var result struc.User
 	err := user.FindOne(context.Background(), filter).Decode(&result)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -79,7 +79,7 @@ func LoginDB(c echo.Context) error {
 		return echo.ErrUnauthorized
 	}
 
-	claims := &strc.JwtCustomClaims{
+	claims := &struc.JwtCustomClaims{
 		Id:       result.ID.Hex(),
 		UserName: result.UserName,
 		Admin:    true,
@@ -106,7 +106,7 @@ func GetToDolist(c echo.Context) error {
 }
 
 func AddToDoList(c echo.Context) error {
-	todo := new(strc.ToDo)
+	todo := new(struc.ToDo)
 	fmt.Println(c.Get("username"))
 	if err := c.Bind(todo); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
@@ -119,7 +119,7 @@ func AddToDoList(c echo.Context) error {
 
 func UpdateToDoList(c echo.Context) error {
 	id := c.Param("id")
-	todo := new(strc.ToDoInput)
+	todo := new(struc.ToDoInput)
 
 	if err := c.Bind(todo); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
@@ -167,9 +167,9 @@ func GetToDoListDB(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 	defer cursor.Close(context.Background())
-	var todoList []strc.ToDoDB
+	var todoList []struc.ToDoDB
 	for cursor.Next(context.Background()) {
-		var todo strc.ToDoDB
+		var todo struc.ToDoDB
 		if err := cursor.Decode(&todo); err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 		}
@@ -185,7 +185,7 @@ func GetToDoListDB(c echo.Context) error {
 
 func CreateToDoListDB(c echo.Context) error {
 
-	todo := new(strc.ToDoInput)
+	todo := new(struc.ToDoInput)
 
 	if err := c.Bind(todo); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
@@ -216,7 +216,7 @@ func GetToDolistDBById(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 	filter := bson.M{"_id": objectID}
-	var result strc.ToDoDB
+	var result struc.ToDoDB
 	err = db.FindOne(context.Background(), filter).Decode(&result)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -230,7 +230,7 @@ func GetToDolistDBById(c echo.Context) error {
 
 func UpdateToDoListDB(c echo.Context) error {
 	id := c.Param("id")
-	todo := new(strc.ToDoInput)
+	todo := new(struc.ToDoInput)
 
 	if err := c.Bind(todo); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
@@ -247,7 +247,7 @@ func UpdateToDoListDB(c echo.Context) error {
 		"updatedAt":   time.Now(),
 	}}
 
-	var result strc.ToDoDB
+	var result struc.ToDoDB
 	err = db.FindOneAndUpdate(context.Background(), filter, update).Decode(&result)
 
 	if err != nil {
@@ -270,7 +270,7 @@ func DeleteToDolistDBById(c echo.Context) error {
 
 	filter := bson.M{"_id": objectID}
 
-	var result strc.ToDoDB
+	var result struc.ToDoDB
 	err = db.FindOneAndDelete(context.Background(), filter).Decode(&result)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
