@@ -21,7 +21,6 @@ import (
 func main() {
 
 	initTimeZone()
-	config := createConfigAuthJWT()
 
 	dbName := "golang"
 	db := InitMongoDB(dbName)
@@ -39,13 +38,14 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	user := e.Group("/user")
+	user := e.Group("/api/user")
 	user.Use(middleware.BasicAuth(basicAuth))
 	user.POST("/login", userHandler.Login)
 	user.POST("/register", userHandler.RegisterUser)
 
-	todoDB := e.Group("/todo/db")
+	todoDB := e.Group("/api/todo")
 
+	config := createConfigAuthJWT()
 	todoDB.Use(echojwt.WithConfig(config))
 	todoDB.GET("/GetToDoListAll", toDoListHandler.GetToDoList)
 	todoDB.GET("/GetToDoListById/:id", toDoListHandler.GetToDoListById)
