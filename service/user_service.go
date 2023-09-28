@@ -9,6 +9,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/to-do-list/repository"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -77,6 +78,9 @@ func (s userService) RegisterUser(register RegisterUser) (*string, error) {
 	id, err := s.userRepo.CreateUser(user)
 
 	if err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			return nil, errors.New("data with the same unique value for username already exists")
+		}
 		return nil, err
 	}
 

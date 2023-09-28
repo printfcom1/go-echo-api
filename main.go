@@ -39,8 +39,11 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	e.POST("/login", userHandler.Login)
-	e.POST("/register", userHandler.RegisterUser)
+	user := e.Group("/user")
+	user.Use(middleware.BasicAuth(basicAuth))
+	user.POST("/login", userHandler.Login)
+	user.POST("/register", userHandler.RegisterUser)
+
 	todoDB := e.Group("/todo/db")
 
 	todoDB.Use(echojwt.WithConfig(config))
@@ -105,6 +108,22 @@ func createConfigAuthJWT() echojwt.Config {
 		SigningKey: []byte(*key)}
 
 	return config
+}
+
+func basicAuth(username, password string, c echo.Context) (bool, error) {
+	usernameRegis, err := goDotEnvVariable("USERNAME_REGIS")
+	if err != nil {
+		return false, err
+	}
+	passwordRegis, err := goDotEnvVariable("PASSWORD_REGIS")
+	if err != nil {
+		return false, err
+	}
+
+	if username == *usernameRegis && password == *passwordRegis {
+		return true, nil
+	}
+	return false, nil
 }
 
 func goDotEnvVariable(key string) (*string, error) {

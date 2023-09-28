@@ -6,6 +6,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type userRepositoryDB struct {
@@ -27,6 +28,8 @@ func (u userRepositoryDB) GetUser(username string) (*User, error) {
 }
 
 func (u userRepositoryDB) CreateUser(user CreateUser) (interface{}, error) {
+	collection := u.db.Collection("User")
+
 	userMap := bson.M{
 		"username":  user.UserName,
 		"password":  user.Password,
@@ -35,7 +38,17 @@ func (u userRepositoryDB) CreateUser(user CreateUser) (interface{}, error) {
 		"updatedAt": time.Now(),
 	}
 
-	res, err := u.db.Collection("User").InsertOne(context.Background(), userMap)
+	indexModel := mongo.IndexModel{
+		Keys:    bson.M{"username": 1},
+		Options: options.Index().SetUnique(true),
+	}
+
+	_, err := collection.Indexes().CreateOne(context.Background(), indexModel)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := collection.InsertOne(context.Background(), userMap)
 	if err != nil {
 		return nil, err
 	}
