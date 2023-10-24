@@ -47,11 +47,11 @@ func main() {
 
 	config := createConfigAuthJWT()
 	todoDB.Use(echojwt.WithConfig(config))
-	todoDB.GET("/GetToDoListAll", toDoListHandler.GetToDoList)
-	todoDB.GET("/GetToDoListById/:id", toDoListHandler.GetToDoListById)
-	todoDB.POST("/CreateToDoList", toDoListHandler.CreateToDoList)
-	todoDB.PUT("/UpdateToDoList/:id", toDoListHandler.UpdateToDoList)
-	todoDB.DELETE("/DeleteToDoList/:id", toDoListHandler.DeleteToDoToDoList)
+	todoDB.GET("/ToDoListAll", toDoListHandler.GetToDoList)
+	todoDB.GET("/ToDoListById/:id", toDoListHandler.GetToDoListById)
+	todoDB.POST("/ToDoList", toDoListHandler.CreateToDoList)
+	todoDB.PUT("/ToDoList/:id", toDoListHandler.UpdateToDoList)
+	todoDB.DELETE("/ToDoList/:id", toDoListHandler.DeleteToDoToDoList)
 
 	e.Logger.Fatal(e.Start(":3000"))
 }
