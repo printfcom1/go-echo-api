@@ -43,12 +43,12 @@ func (h toDoListHandler) CreateToDoList(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
-	message, err := h.toDoHandler.CreateToDoListService(*toDo)
+	todolist, err := h.toDoHandler.CreateToDoListService(*toDo)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, map[string]string{"message ": *message})
+	return c.JSON(http.StatusOK, *todolist)
 }
 
 func (h toDoListHandler) UpdateToDoList(c echo.Context) error {

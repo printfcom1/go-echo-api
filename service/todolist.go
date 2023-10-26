@@ -17,7 +17,7 @@ type ToDoListRes struct {
 type ToDoListService interface {
 	GetToDoListAllService() ([]ToDoListRes, error)
 	GetToDoListByIdService(string) (*ToDoListRes, error)
-	CreateToDoListService(repository.ToDoListInput) (*string, error)
+	CreateToDoListService(repository.ToDoListInput) (*repository.ToDoListResponseCreate, error)
 	UpdateToDoListService(string, repository.ToDoListInput) (*ToDoListRes, error)
 	DeleteToDoListService(string) (*ToDoListRes, error)
 }

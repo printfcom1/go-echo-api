@@ -29,9 +29,7 @@ func (t toDoListRepositoryDB) GetToDoAll() ([]ToDoList, error) {
 	todoList := []ToDoList{}
 	for cursor.Next(context.Background()) {
 		todo := ToDoList{}
-		if err := cursor.Decode(&todo); err != nil {
-			return nil, err
-		}
+		cursor.Decode(&todo)
 		todoList = append(todoList, todo)
 	}
 
@@ -56,7 +54,7 @@ func (t toDoListRepositoryDB) GetToDoById(id string) (*ToDoList, error) {
 	return &toDo, nil
 }
 
-func (t toDoListRepositoryDB) CreateToDo(toDo ToDoListInput) (interface{}, error) {
+func (t toDoListRepositoryDB) CreateToDo(toDo ToDoListInput) (*ToDoListResponseCreate, error) {
 
 	todoMap := bson.M{
 		"title":       toDo.Title,
@@ -70,7 +68,14 @@ func (t toDoListRepositoryDB) CreateToDo(toDo ToDoListInput) (interface{}, error
 		return nil, err
 	}
 	id := res.InsertedID
-	return id, nil
+	objIDString := id.(primitive.ObjectID)
+	todo := ToDoListResponseCreate{
+		ID:          objIDString,
+		Title:       toDo.Title,
+		Description: toDo.Description,
+	}
+
+	return &todo, nil
 }
 
 func (t toDoListRepositoryDB) UpdateToDo(id string, toDo ToDoListInput) (*ToDoList, error) {

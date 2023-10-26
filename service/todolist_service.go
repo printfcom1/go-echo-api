@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/to-do-list/repository"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -52,18 +51,14 @@ func (s toDolistService) GetToDoListByIdService(id string) (*ToDoListRes, error)
 	return &toDoRes, nil
 }
 
-func (s toDolistService) CreateToDoListService(toDoInput repository.ToDoListInput) (*string, error) {
-	id, err := s.toDoListRepo.CreateToDo(toDoInput)
+func (s toDolistService) CreateToDoListService(toDoInput repository.ToDoListInput) (*repository.ToDoListResponseCreate, error) {
+	todo, err := s.toDoListRepo.CreateToDo(toDoInput)
 
 	if err != nil {
 		return nil, err
 	}
 
-	objIDString := id.(primitive.ObjectID).Hex()
-
-	message := "ToDo id " + objIDString + " created successfully"
-
-	return &message, nil
+	return todo, nil
 }
 
 func (s toDolistService) UpdateToDoListService(id string, toDoInput repository.ToDoListInput) (*ToDoListRes, error) {
